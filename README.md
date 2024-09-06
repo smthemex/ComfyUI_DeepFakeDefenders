@@ -28,6 +28,7 @@ download models [link](https://pan.baidu.com/s/1hh6Rub60T7UXok5rqACffQ?pwd=gxu5)
 4 Example
 ----
 
+![](https://github.com/smthemex/ComfyUI_DeepFakeDefenders/blob/main/example/example.png)
 
 5 Citation
 ------
