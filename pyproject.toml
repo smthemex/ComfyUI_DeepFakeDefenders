@@ -1,0 +1,15 @@
+[project]
+name = "comfyui_deepfakedefenders"
+description = "ou can using DeepFakeDefenders in comfyUI to Prediction image is a DeepFake img or not."
+version = "1.0.0"
+license = "LICENSE"
+dependencies = ["#torch", "#torchvision", "#transformers", "#cv2"]
+
+[project.urls]
+Repository = "https://github.com/smthemex/ComfyUI_DeepFakeDefenders"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "smthemex"
+DisplayName = "ComfyUI_DeepFakeDefenders"
+Icon = ""
