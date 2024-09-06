@@ -1,0 +1,433 @@
+{
+  "last_node_id": 8,
+  "last_link_id": 8,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "DeepFakeDefender_Loader",
+      "pos": [
+        2234,
+        -223
+      ],
+      "size": {
+        "0": 315,
+        "1": 78
+      },
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "net",
+          "type": "MODEL",
+          "links": [
+            1
+          ],
+          "shape": 3,
+          "label": "net",
+          "slot_index": 0
+        },
+        {
+          "name": "transform_val",
+          "type": "MODEL",
+          "links": [
+            2
+          ],
+          "shape": 3,
+          "label": "transform_val",
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DeepFakeDefender_Loader"
+      },
+      "widgets_values": [
+        "DeepFakeDefender"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "MS_Object_img_Batch",
+      "pos": [
+        2316,
+        -376
+      ],
+      "size": {
+        "0": 210,
+        "1": 86
+      },
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_a",
+          "type": "IMAGE",
+          "link": 4,
+          "label": "image_a"
+        },
+        {
+          "name": "image_b",
+          "type": "IMAGE",
+          "link": 6,
+          "label": "image_b"
+        },
+        {
+          "name": "image_c",
+          "type": "IMAGE",
+          "link": 7,
+          "label": "image_c"
+        },
+        {
+          "name": "image_d",
+          "type": "IMAGE",
+          "link": 8,
+          "label": "image_d"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            3
+          ],
+          "shape": 3,
+          "label": "IMAGE"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MS_Object_img_Batch"
+      }
+    },
+    {
+      "id": 4,
+      "type": "LoadImage",
+      "pos": [
+        1869,
+        -448
+      ],
+      "size": [
+        315,
+        314.00000381469727
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            4
+          ],
+          "shape": 3,
+          "label": "IMAGE"
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null,
+          "shape": 3,
+          "label": "MASK"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "img_2_should_be_0.9854894280433655.jpg",
+        "image"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "LoadImage",
+      "pos": [
+        1866,
+        -55
+      ],
+      "size": {
+        "0": 315,
+        "1": 314
+      },
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            6
+          ],
+          "shape": 3,
+          "label": "IMAGE"
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null,
+          "shape": 3,
+          "label": "MASK"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "img_1_should_be_0.0016829653177410.jpg",
+        "image"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "LoadImage",
+      "pos": [
+        2243,
+        -51
+      ],
+      "size": {
+        "0": 315,
+        "1": 314
+      },
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            7
+          ],
+          "shape": 3,
+          "label": "IMAGE"
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null,
+          "shape": 3,
+          "label": "MASK"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "ComfyUI_00078_.png",
+        "image"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "LoadImage",
+      "pos": [
+        2588,
+        -44
+      ],
+      "size": {
+        "0": 315,
+        "1": 314
+      },
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            8
+          ],
+          "shape": 3,
+          "label": "IMAGE"
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null,
+          "shape": 3,
+          "label": "MASK"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "123 (4).png",
+        "image"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "DeepFakeDefender_Sampler",
+      "pos": [
+        2610,
+        -237
+      ],
+      "size": {
+        "0": 254.40000915527344,
+        "1": 66
+      },
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 3,
+          "label": "image"
+        },
+        {
+          "name": "net",
+          "type": "MODEL",
+          "link": 1,
+          "label": "net"
+        },
+        {
+          "name": "transform_val",
+          "type": "MODEL",
+          "link": 2,
+          "label": "transform_val"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "links": [
+            5
+          ],
+          "shape": 3,
+          "label": "string",
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DeepFakeDefender_Sampler"
+      }
+    },
+    {
+      "id": 8,
+      "type": "ShowText|pysssss",
+      "pos": [
+        2931,
+        -235
+      ],
+      "size": [
+        365.8988833528515,
+        228.85549460737843
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 5,
+          "widget": {
+            "name": "text"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null,
+          "shape": 6,
+          "label": "STRING"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ShowText|pysssss"
+      },
+      "widgets_values": [
+        "",
+        "\nPrediction of this image (1) being Deepfake: [0.98547804]. \n 这张照片(1)是深度伪造的预测值为：[0.98547804].\n\nPrediction of this image (2) being Deepfake: [0.0016841]. \n 这张照片(2)是深度伪造的预测值为：[0.0016841].\n\nPrediction of this image (3) being Deepfake: [0.8414525]. \n 这张照片(3)是深度伪造的预测值为：[0.8414525].\n\nPrediction of this image (4) being Deepfake: [0.877892]. \n 这张照片(4)是深度伪造的预测值为：[0.877892].\n"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      1,
+      "MODEL"
+    ],
+    [
+      2,
+      1,
+      1,
+      2,
+      2,
+      "MODEL"
+    ],
+    [
+      3,
+      3,
+      0,
+      2,
+      0,
+      "IMAGE"
+    ],
+    [
+      4,
+      4,
+      0,
+      3,
+      0,
+      "IMAGE"
+    ],
+    [
+      5,
+      2,
+      0,
+      8,
+      0,
+      "STRING"
+    ],
+    [
+      6,
+      5,
+      0,
+      3,
+      1,
+      "IMAGE"
+    ],
+    [
+      7,
+      6,
+      0,
+      3,
+      2,
+      "IMAGE"
+    ],
+    [
+      8,
+      7,
+      0,
+      3,
+      3,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1.0610764609500096,
+      "offset": [
+        -1725.8606108521142,
+        523.2557955667427
+      ]
+    }
+  },
+  "version": 0.4
+}
