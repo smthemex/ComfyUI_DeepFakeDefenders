@@ -140,7 +140,7 @@ class DeepFakeDefender_Sampler:
         empty_img = Image.new('RGB', (512, 512), (255, 255, 255))
         B, _, _, _ = image.shape
         if B==1:
-            origin_img_list =[tensor2pil(image.copy())]
+            origin_img_list =[tensor2pil(image.clone())]
             img_list=[nomarl_upscale_topil(image, crop_width, crop_height)]
         else:
             img_list = list(torch.chunk(image, chunks=B))
