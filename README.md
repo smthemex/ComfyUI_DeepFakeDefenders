@@ -19,7 +19,8 @@ pip install -r requirements.txt
 ```
 3 Need  model 
 ----    
-download models [link](https://pan.baidu.com/s/1hh6Rub60T7UXok5rqACffQ?pwd=gxu5)
+
+download models [百度云](https://pan.baidu.com/s/1hh6Rub60T7UXok5rqACffQ?pwd=gxu5) or  [google drive](https://drive.google.com/drive/folders/1OQkkBn-Wv9PTHaxhXs_JF1IdkIES64pm)
 ```
 ├── ComfyUI/models/DeepFakeDefender
 |             ├── ema.state
