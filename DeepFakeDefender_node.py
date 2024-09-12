@@ -10,7 +10,8 @@ from torchvision import transforms
 from PIL import Image
 from .network import MFF_MoE
 import folder_paths
-from comfy.utils import ProgressBar
+from comfy.utils import ProgressBar,common_upscale
+
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 device = (
@@ -28,6 +29,19 @@ def tensor2pil(tensor):
 def phi2narry(img):
     img = torch.from_numpy(np.array(img).astype(np.float32) / 255.0).unsqueeze(0)
     return img
+
+def nomarl_upscale(img_tensor, width, height):
+    samples = img_tensor.movedim(-1, 1)
+    img = common_upscale(samples, width, height, "nearest-exact", "center")
+    samples = img.movedim(1, -1)
+    return samples
+
+def nomarl_upscale_topil(img_tensor, width, height):
+    samples = img_tensor.movedim(-1, 1)
+    img = common_upscale(samples, width, height, "nearest-exact", "center")
+    samples = img.movedim(1, -1)
+    img_pil = tensor2pil(samples)
+    return img_pil
 
 def images_generator(file_list):# form VH
     sizes = {}
@@ -112,6 +126,8 @@ class DeepFakeDefender_Sampler:
                     "round": 0.0000000001,
                     "display": "number",
                 }),
+                "crop_width": ("INT", {"default": 512, "min": 256, "max": 4096, "step": 32, "display": "number"}),
+                "crop_height": ("INT", {"default": 512, "min": 256, "max": 4096, "step": 32, "display": "number"}),
             },
         }
     
@@ -120,26 +136,30 @@ class DeepFakeDefender_Sampler:
     FUNCTION = "test"
     CATEGORY = "DeepFakeDefender_Gold"
     
-    def test(self,image,net,transform_val,threshold):
+    def test(self,image,net,transform_val,threshold,crop_width,crop_height):
+        empty_img = Image.new('RGB', (512, 512), (255, 255, 255))
         B, _, _, _ = image.shape
         if B==1:
-            img_list=[tensor2pil(image)]
+            origin_img_list =[tensor2pil(image.copy())]
+            img_list=[nomarl_upscale_topil(image, crop_width, crop_height)]
         else:
             img_list = list(torch.chunk(image, chunks=B))
-            img_list = [tensor2pil(img) for img in img_list]
+            origin_img_list = [tensor2pil(img) for img in img_list.copy()]
+            img_list = [nomarl_upscale_topil(img, crop_width, crop_height) for img in img_list]
         out_str=''
         below_img=[]
         above_img=[]
+        
         pred_check=np.array([threshold])
-        for i in range(B):
-            x = img_list[i]
+        for i,img in enumerate(img_list):
+            #x = img_list[i]
             # x = cv2.imread(input_path)[..., ::-1]
             # x=np.array(x)
             #x=np.asarray(x)
             # x = cv2.cvtColor(x, cv2.COLOR_RGB2BGR)[..., ::-1]
             #x = Image.fromarray(np.uint8(x))
            
-            y = transform_val(x).unsqueeze(0).cuda()
+            y = transform_val(img).unsqueeze(0).cuda()
             pred = net(y)
             pred = pred.detach().cpu().numpy()
             print('Prediction of this image [%s] being Deepfake(这张照片是深度伪造的预测值为): %10.9f' % (i+1,pred))
@@ -148,13 +168,17 @@ class DeepFakeDefender_Sampler:
             out_str += string
             
             if np.less_equal(pred,pred_check)==[True] :
-                below_img.append(x)
+                below_img.append(origin_img_list[i])
             if np.greater(pred,pred_check)==[True] :
-                above_img.append(x)
+                above_img.append(origin_img_list[i])
         if below_img:
             below_image=load_images(below_img)
+        else:
+            below_image = load_images([empty_img])
         if above_img:
             above_image = load_images(above_img)
+        else:
+            above_image = load_images([empty_img])
         return (out_str,above_image,below_image)
 
 # A dictionary that contains all nodes you want to export with their names
