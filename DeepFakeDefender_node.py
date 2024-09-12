@@ -10,6 +10,7 @@ from torchvision import transforms
 from PIL import Image
 from .network import MFF_MoE
 import folder_paths
+from comfy.utils import ProgressBar
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 device = (
@@ -23,6 +24,42 @@ def tensor2pil(tensor):
     image_np = tensor.squeeze().mul(255).clamp(0, 255).byte().numpy()
     image = Image.fromarray(image_np, mode='RGB')
     return image
+
+def phi2narry(img):
+    img = torch.from_numpy(np.array(img).astype(np.float32) / 255.0).unsqueeze(0)
+    return img
+
+def images_generator(file_list):# form VH
+    sizes = {}
+    for i in file_list:
+        count = sizes.get(i.size, 0)
+        sizes[i.size] = count +1
+    size = max(sizes.items(), key=lambda x: x[1])[0]
+    yield size[0], size[1]
+    total_images = len(file_list)
+    processed_images = 0
+    pbar = ProgressBar(total_images)
+    images = map(phi2narry, file_list)
+    try:
+        prev_image = next(images)
+        while True:
+            next_image = next(images)
+            yield prev_image
+            processed_images += 1
+            pbar.update_absolute(processed_images, total_images)
+            prev_image = next_image
+    except StopIteration:
+        pass
+    if prev_image is not None:
+        yield prev_image
+
+def load_images(file_list):
+    gen = images_generator(file_list)
+    (width, height) = next(gen)
+    images = torch.from_numpy(np.fromiter(gen, np.dtype((np.float32, (height, width, 3)))))
+    if len(images) == 0:
+        raise FileNotFoundError(f"No images could be loaded from directory '{file_list}'.")
+    return images
 
 class DeepFakeDefender_Loader:
     def __init__(self):
@@ -67,15 +104,23 @@ class DeepFakeDefender_Sampler:
                 "image": ("IMAGE",),
                 "net": ("MODEL",),
                 "transform_val": ("MODEL",),
+                "threshold": ("FLOAT", {
+                    "default": 0.500000000,
+                    "min": 0.000000001,
+                    "max": 0.999999999,
+                    "step": 0.001,
+                    "round": 0.0000000001,
+                    "display": "number",
+                }),
             },
         }
     
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("string",)
+    RETURN_TYPES = ("STRING","IMAGE","IMAGE",)
+    RETURN_NAMES = ("string","above","below",)
     FUNCTION = "test"
     CATEGORY = "DeepFakeDefender_Gold"
     
-    def test(self,image,net,transform_val):
+    def test(self,image,net,transform_val,threshold):
         B, _, _, _ = image.shape
         if B==1:
             img_list=[tensor2pil(image)]
@@ -83,6 +128,9 @@ class DeepFakeDefender_Sampler:
             img_list = list(torch.chunk(image, chunks=B))
             img_list = [tensor2pil(img) for img in img_list]
         out_str=''
+        below_img=[]
+        above_img=[]
+        pred_check=np.array([threshold])
         for i in range(B):
             x = img_list[i]
             # x = cv2.imread(input_path)[..., ::-1]
@@ -90,14 +138,24 @@ class DeepFakeDefender_Sampler:
             #x=np.asarray(x)
             # x = cv2.cvtColor(x, cv2.COLOR_RGB2BGR)[..., ::-1]
             #x = Image.fromarray(np.uint8(x))
-            x = transform_val(x).unsqueeze(0).cuda()
-            pred = net(x)
+           
+            y = transform_val(x).unsqueeze(0).cuda()
+            pred = net(y)
             pred = pred.detach().cpu().numpy()
             print('Prediction of this image [%s] being Deepfake(这张照片是深度伪造的预测值为): %10.9f' % (i+1,pred))
             pred = np.around(pred, decimals=9)
             string = f"\nPrediction of this image ({i+1}) being Deepfake: {pred}. \n 这张照片({i+1})是深度伪造的预测值为：{pred}.\n"
-            out_str+=string
-        return (out_str,)
+            out_str += string
+            
+            if np.less_equal(pred,pred_check)==[True] :
+                below_img.append(x)
+            if np.greater(pred,pred_check)==[True] :
+                above_img.append(x)
+        if below_img:
+            below_image=load_images(below_img)
+        if above_img:
+            above_image = load_images(above_img)
+        return (out_str,above_image,below_image)
 
 # A dictionary that contains all nodes you want to export with their names
 # NOTE: names should be globally unique
