@@ -5,8 +5,12 @@ from 1st place solution for The Global Multimedia Deepfake Detection (Image Trac
 
 **DeepFakeDefenders From: [link](https://github.com/HighwayWu/DeepFakeDefenders)** 
 
-**Update**
-* Add the function of distinguishing images based on thresholds/增加根据阈值区分图片的功能   
+Update
+---
+**2024/09/13**
+* Add the function of distinguishing images based on thresholds/增加根据阈值区分图片的功能
+* Unmatched image will get a empty output/如果没有匹配的图片，会得到一张带有文字提示的空输出。
+* Add image cropping function to better match the model/加入图片裁切，方法内置是512*512的分块，识别精度有轻微提升
 
 1.Installation
 -----
@@ -32,7 +36,7 @@ download models [百度云](https://pan.baidu.com/s/1hh6Rub60T7UXok5rqACffQ?pwd=
 4 Example
 ----
 Notice,example img are all deepfake img,so  we still need to improve recognition accuracy
-![](https://github.com/smthemex/ComfyUI_DeepFakeDefenders/blob/main/example/example1.png)
+![](https://github.com/smthemex/ComfyUI_DeepFakeDefenders/blob/main/example/example.png)
 
 5 Citation
 ------
