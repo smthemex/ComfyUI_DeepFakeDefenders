@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torchvision import transforms
-from PIL import Image
+from PIL import Image,ImageDraw, ImageFont
 from .network import MFF_MoE
 import folder_paths
 from comfy.utils import ProgressBar,common_upscale
@@ -75,6 +75,14 @@ def load_images(file_list):
         raise FileNotFoundError(f"No images could be loaded from directory '{file_list}'.")
     return images
 
+def draw_text(img,float_text,function):
+    draw = ImageDraw.Draw(img)
+    text=f"No image'prediction is {function} the {float_text}."
+    font = ImageFont.truetype(os.path.join(current_path,"Inkfree.ttf"), 25)
+    draw.text((64, 256), text, font=font, fill=(0, 0, 0))
+    return img
+
+
 class DeepFakeDefender_Loader:
     def __init__(self):
        pass
@@ -122,7 +130,7 @@ class DeepFakeDefender_Sampler:
                     "default": 0.500000000,
                     "min": 0.000000001,
                     "max": 0.999999999,
-                    "step": 0.001,
+                    "step": 0.0001,
                     "round": 0.0000000001,
                     "display": "number",
                 }),
@@ -137,7 +145,9 @@ class DeepFakeDefender_Sampler:
     CATEGORY = "DeepFakeDefender_Gold"
     
     def test(self,image,net,transform_val,threshold,crop_width,crop_height):
+        
         empty_img = Image.new('RGB', (512, 512), (255, 255, 255))
+        
         B, _, _, _ = image.shape
         if B==1:
             origin_img_list =[tensor2pil(image.clone())]
@@ -152,13 +162,6 @@ class DeepFakeDefender_Sampler:
         
         pred_check=np.array([threshold])
         for i,img in enumerate(img_list):
-            #x = img_list[i]
-            # x = cv2.imread(input_path)[..., ::-1]
-            # x=np.array(x)
-            #x=np.asarray(x)
-            # x = cv2.cvtColor(x, cv2.COLOR_RGB2BGR)[..., ::-1]
-            #x = Image.fromarray(np.uint8(x))
-           
             y = transform_val(img).unsqueeze(0).cuda()
             pred = net(y)
             pred = pred.detach().cpu().numpy()
@@ -174,10 +177,12 @@ class DeepFakeDefender_Sampler:
         if below_img:
             below_image=load_images(below_img)
         else:
+            empty_img=draw_text(empty_img, threshold, "below")
             below_image = load_images([empty_img])
         if above_img:
             above_image = load_images(above_img)
         else:
+            empty_img = draw_text(empty_img, threshold, "above")
             above_image = load_images([empty_img])
         return (out_str,above_image,below_image)
 
